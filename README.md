@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Afriekeza
 
-## Getting Started
+Private-markets platform for African businesses and verified investors — marketing site plus Investor, Issuer, and Admin portals.
 
-First, run the development server:
+## Local development
 
 ```bash
+npm install
+cp .env.example .env.local   # fill in Supabase + optional payment keys
+npm run db:migrate           # requires DATABASE_URL in .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Portal URLs (local):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Marketing: `http://localhost:3000`
+- Investor: `http://localhost:3000/investor/dashboard?portal=investor`
+- Issuer: `http://localhost:3000/business/dashboard?portal=business`
+- Admin: `http://localhost:3000/admin/dashboard?portal=admin`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deploy on Vercel (recommended, free tier)
 
-## Learn More
+Vercel Hobby is free for personal/small projects and is the best fit for this Next.js app (SSR, API routes, middleware). **Keep your domain on Namecheap** — you only point DNS to Vercel; no extra hosting fee.
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Push to GitHub
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Ensure `main` is pushed to your GitHub repository.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 2. Import in Vercel
 
-## Deploy on Vercel
+1. Go to [vercel.com](https://vercel.com) → **Add New Project** → import this repo.
+2. Framework preset: **Next.js** (auto-detected).
+3. Build command: `npm run build` (default).
+4. Install command: `npm install` (default).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 3. Environment variables (Vercel → Settings → Environment Variables)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Copy from `.env.example`. Minimum for a working pilot:
+
+| Variable | Notes |
+|----------|--------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-only; never expose to client |
+| `DATABASE_URL` | Supabase pooler URL (for migrations run locally or via CI) |
+| `NEXT_PUBLIC_APP_URL` | `https://yourdomain.com` (production URL) |
+| `PAYMENTS_SANDBOX` | `true` until live M-Pesa/Stripe keys are ready |
+
+Add payment provider keys when going live (`MPESA_*`, `STRIPE_*`, etc.).
+
+### 4. Namecheap domain → Vercel (no Namecheap hosting needed)
+
+In **Namecheap → Domain → Advanced DNS**:
+
+| Type | Host | Value |
+|------|------|--------|
+| `A` | `@` | `76.76.21.21` (Vercel apex) |
+| `CNAME` | `www` | `cname.vercel-dns.com` |
+
+In **Vercel → Project → Settings → Domains**, add:
+
+- `yourdomain.com`
+- `www.yourdomain.com`
+
+Optional portal subdomains (match `lib/portal/resolve.ts`):
+
+| Subdomain | Portal |
+|-----------|--------|
+| `invest.yourdomain.com` | Investor |
+| `business.yourdomain.com` | Issuer |
+| `admin.yourdomain.com` | Admin |
+
+Add each as a domain in Vercel; Namecheap CNAME records point to `cname.vercel-dns.com`.
+
+### 5. Supabase auth redirects
+
+In **Supabase → Authentication → URL configuration**:
+
+- **Site URL:** `https://yourdomain.com`
+- **Redirect URLs:**  
+  `https://yourdomain.com/auth/callback`  
+  `https://invest.yourdomain.com/auth/callback` (if using subdomains)
+
+### 6. Redeploy
+
+After env vars and domains are set, trigger a redeploy. Set `NEXT_PUBLIC_APP_URL` to your canonical production URL.
+
+---
+
+## Can I host on Namecheap without paying?
+
+**Namecheap shared hosting** (Stellar, etc.) is PHP/static-focused and does **not** run Next.js 16 with server components, middleware, and API routes reliably. You would still pay for hosting and likely need a VPS.
+
+**Zero extra hosting cost:** use **Vercel free tier + Namecheap domain only** (domain renewal is your only Namecheap charge you already have). The app runs on Vercel; Namecheap only provides DNS.
+
+Alternatives with free tiers: Cloudflare Pages, Netlify (similar DNS setup from Namecheap).
+
+## Scripts
+
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run db:migrate` | Apply Supabase SQL migrations |
+| `npm run users:provision` | Seed test users (dev only) |
+| `npm run storage:setup` | Create Supabase storage buckets |

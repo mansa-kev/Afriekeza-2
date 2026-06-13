@@ -4,11 +4,12 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type SectionHeaderProps = {
-  headline: string;
+  headline: React.ReactNode;
   subheadline?: string;
   align?: "left" | "center";
   dark?: boolean;
   className?: string;
+  headlineClassName?: string;
 };
 
 export function SectionHeader({
@@ -17,6 +18,7 @@ export function SectionHeader({
   align = "center",
   dark = false,
   className,
+  headlineClassName,
 }: SectionHeaderProps) {
   return (
     <motion.div
@@ -34,6 +36,7 @@ export function SectionHeader({
         className={cn(
           "font-display text-[30px] font-bold leading-tight tracking-tight md:text-[42px]",
           dark ? "text-white" : "text-navy",
+          headlineClassName,
         )}
       >
         {headline}

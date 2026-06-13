@@ -66,7 +66,7 @@ export const mainNav: NavSection[] = [
           {
             title: "How Afriekeza Works",
             description: "Your guide to responsible participation.",
-            href: "/#how-it-works",
+            href: "/about#how-it-works",
           },
           {
             title: "Understanding Risk",
@@ -367,6 +367,11 @@ export const mainNav: NavSection[] = [
             title: "Mission & Vision",
             description: "Why we are building this.",
             href: "/about#mission",
+          },
+          {
+            title: "How Afriekeza Works",
+            description: "From application to ongoing reporting.",
+            href: "/about#how-it-works",
           },
           {
             title: "Trust & Safety",

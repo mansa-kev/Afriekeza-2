@@ -1,6 +1,7 @@
 import { Target, MapPin, Coins, ShieldCheck, Users } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 import { SectionHeader } from "@/components/section-header";
+import { HowItWorksSection } from "@/components/how-it-works-section";
 import { Button } from "@/components/ui/button";
 
 export default function AboutPage() {
@@ -60,6 +61,8 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      <HowItWorksSection />
 
       <section id="advisors" className="py-20">
         <div className="mx-auto max-w-7xl px-6">
