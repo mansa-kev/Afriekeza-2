@@ -1,4 +1,4 @@
-export type PortalId = "marketing" | "investor" | "business" | "admin";
+export type PortalId = "marketing" | "investor" | "business" | "registry" | "admin";
 
 export type PortalNavItem = {
   label: string;
@@ -42,11 +42,21 @@ export const PORTALS: Record<PortalId, PortalConfig> = {
   business: {
     id: "business",
     label: "Issuer Portal",
-    description: "Capital-readiness workspace for issuers",
+    description: "Capital raise and deal operations",
     subdomain: "business",
     pathPrefix: "/business",
     homePath: "/business/dashboard",
     loginPath: "/business/login",
+    density: "lean",
+  },
+  registry: {
+    id: "registry",
+    label: "Afriekeza Registry",
+    description: "Capital readiness and investor reporting infrastructure",
+    subdomain: "registry",
+    pathPrefix: "/registry",
+    homePath: "/registry/dashboard",
+    loginPath: "/registry/login",
     density: "lean",
   },
   admin: {
@@ -76,17 +86,24 @@ const INVESTOR_ROUTES = [
   { label: "Account", path: "/account", icon: "User" },
 ];
 
-const BUSINESS_ROUTES = [
+const REGISTRY_ROUTES = [
   { label: "Overview", path: "/dashboard", icon: "LayoutDashboard" },
   { label: "Company Profile", path: "/company", icon: "Building2" },
-  { label: "KYB Status", path: "/kyb", icon: "ShieldCheck" },
-  { label: "Readiness Score", path: "/funding-readiness", icon: "ClipboardCheck" },
-  { label: "Capital Request", path: "/raise-application", icon: "TrendingUp" },
+  { label: "Cap Table", path: "/cap-table", icon: "PieChart" },
   { label: "Data Room", path: "/data-room", icon: "Database" },
-  { label: "Registry", path: "/registry-portal", icon: "Table2" },
-  { label: "Deal Pipeline", path: "/deal-status", icon: "GitBranch" },
+  { label: "Funding Readiness", path: "/readiness", icon: "ClipboardCheck" },
   { label: "Use of Funds", path: "/use-of-funds", icon: "Coins" },
-  { label: "Investor Reporting", path: "/issuer-reporting", icon: "FileBarChart" },
+  { label: "Investor Reporting", path: "/reporting", icon: "FileBarChart" },
+  { label: "Readiness Report", path: "/readiness-report", icon: "FileText" },
+  { label: "Settings", path: "/settings", icon: "Settings" },
+  { label: "Support", path: "/support", icon: "LifeBuoy" },
+];
+
+const BUSINESS_ROUTES = [
+  { label: "Overview", path: "/dashboard", icon: "LayoutDashboard" },
+  { label: "Capital Request", path: "/raise-application", icon: "TrendingUp" },
+  { label: "Deal Pipeline", path: "/deal-status", icon: "GitBranch" },
+  { label: "Open Registry", path: "/registry/dashboard", icon: "Table2" },
   { label: "Team", path: "/team", icon: "Users" },
   { label: "Support", path: "/support", icon: "LifeBuoy" },
 ];
@@ -95,11 +112,11 @@ const ADMIN_ROUTES = [
   { label: "Dashboard", path: "/dashboard", icon: "LayoutDashboard" },
   { label: "Investors", path: "/investors", icon: "Users" },
   { label: "Issuers", path: "/businesses", icon: "Building2" },
+  { label: "Registry Review", path: "/registry", icon: "Table2" },
   { label: "Opportunities", path: "/opportunity-builder", icon: "Briefcase" },
   { label: "Payments", path: "/payments", icon: "CreditCard" },
   { label: "Allocations", path: "/allocations", icon: "ArrowLeftRight" },
   { label: "Reports", path: "/reports", icon: "FileText" },
-  { label: "Registry", path: "/registry-portal", icon: "Table2" },
   { label: "Documents", path: "/documents", icon: "FolderOpen" },
   { label: "Support", path: "/support", icon: "LifeBuoy" },
   { label: "Audit Logs", path: "/audit-logs", icon: "ScrollText" },
@@ -112,14 +129,20 @@ function buildNav(
   routes: { label: string; path: string; icon: string }[],
 ): PortalNavItem[] {
   const prefix = PORTALS[portal].pathPrefix ?? "";
-  return routes.map((r) => ({
-    label: r.label,
-    href: `${prefix}${r.path}`,
-    icon: r.icon,
-  }));
+  return routes.map((r) => {
+    const href = r.path.startsWith("/registry")
+      ? r.path
+      : `${prefix}${r.path}`;
+    return {
+      label: r.label,
+      href,
+      icon: r.icon,
+    };
+  });
 }
 
 export const INVESTOR_NAV = buildNav("investor", INVESTOR_ROUTES);
+export const REGISTRY_NAV = buildNav("registry", REGISTRY_ROUTES);
 export const BUSINESS_NAV = buildNav("business", BUSINESS_ROUTES);
 export const ADMIN_NAV = buildNav("admin", ADMIN_ROUTES);
 
@@ -127,6 +150,8 @@ export function getNavForPortal(portal: PortalId): PortalNavItem[] {
   switch (portal) {
     case "investor":
       return INVESTOR_NAV;
+    case "registry":
+      return REGISTRY_NAV;
     case "business":
       return BUSINESS_NAV;
     case "admin":
@@ -138,6 +163,7 @@ export function getNavForPortal(portal: PortalId): PortalNavItem[] {
 
 export function getPortalFromPath(pathname: string): PortalId | null {
   if (pathname.startsWith("/investor")) return "investor";
+  if (pathname.startsWith("/registry")) return "registry";
   if (pathname.startsWith("/business")) return "business";
   if (pathname.startsWith("/admin")) return "admin";
   return null;

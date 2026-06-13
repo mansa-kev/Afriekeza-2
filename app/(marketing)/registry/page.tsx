@@ -59,9 +59,14 @@ export default function RegistryPage() {
       <section className="py-20">
         <div className="mx-auto max-w-3xl px-6 text-center">
           <SectionHeader headline="Request registry access" subheadline="Get early access to Afriekeza Registry for your company." />
-          <Button href="/contact" variant="primary" size="lg" className="mt-8">
-            Request Registry Access
-          </Button>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <Button href="/registry/login" variant="primary" size="lg">
+              Sign in to Registry
+            </Button>
+            <Button href="/contact" variant="secondary" size="lg">
+              Request access
+            </Button>
+          </div>
         </div>
       </section>
     </>

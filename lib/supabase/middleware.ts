@@ -6,6 +6,7 @@ const PUBLIC_PATHS = [
   "/auth/auth-code-error",
   "/investor/login",
   "/business/login",
+  "/registry/login",
   "/admin/login",
 ];
 
@@ -13,24 +14,29 @@ function isPublicPath(pathname: string) {
   return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
-function portalFromPath(pathname: string): "investor" | "business" | "admin" | null {
+type AppPortal = "investor" | "business" | "registry" | "admin";
+
+function portalFromPath(pathname: string): AppPortal | null {
   if (pathname.startsWith("/investor")) return "investor";
+  if (pathname.startsWith("/registry")) return "registry";
   if (pathname.startsWith("/business")) return "business";
   if (pathname.startsWith("/admin")) return "admin";
   return null;
 }
 
-function loginPath(portal: "investor" | "business" | "admin") {
+function loginPath(portal: AppPortal) {
   return `/${portal}/login`;
 }
 
 function hasPortalRole(
   roles: string[] | null | undefined,
-  portal: "investor" | "business" | "admin",
+  portal: AppPortal,
 ) {
   if (!roles?.length) return false;
   if (portal === "investor") return roles.includes("investor");
-  if (portal === "business") return roles.includes("business_user");
+  if (portal === "business" || portal === "registry") {
+    return roles.includes("business_user");
+  }
   const adminRoles = [
     "admin",
     "super_admin",

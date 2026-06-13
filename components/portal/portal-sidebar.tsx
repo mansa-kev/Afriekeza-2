@@ -42,7 +42,9 @@ export function PortalSidebar({
   const accountPath =
     portal === "business"
       ? `${config.pathPrefix}/company`
-      : `${config.pathPrefix}/account`;
+      : portal === "registry"
+        ? `${config.pathPrefix}/settings`
+        : `${config.pathPrefix}/account`;
 
   return (
     <>

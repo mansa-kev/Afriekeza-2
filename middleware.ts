@@ -58,7 +58,12 @@ export async function middleware(request: NextRequest) {
       pathname.startsWith("/company") ||
       pathname.startsWith("/kyb") ||
       pathname.startsWith("/investors") ||
-      pathname.startsWith("/businesses");
+      pathname.startsWith("/businesses") ||
+      pathname.startsWith("/readiness") ||
+      pathname.startsWith("/cap-table") ||
+      pathname.startsWith("/data-room") ||
+      pathname.startsWith("/reporting") ||
+      pathname.startsWith("/settings");
 
     if (portal !== "marketing" && (pathname === "/" || isPortalRoot)) {
       const target = pathname === "/" ? PORTALS[portal as PortalId].homePath : `${prefix}${pathname}`;
@@ -81,6 +86,7 @@ export async function middleware(request: NextRequest) {
 function isPrefixedPortalPath(pathname: string) {
   return (
     pathname.startsWith("/investor") ||
+    pathname.startsWith("/registry") ||
     pathname.startsWith("/business") ||
     pathname.startsWith("/admin")
   );

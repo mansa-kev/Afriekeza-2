@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { PORTALS, type PortalId } from "@/lib/portal/config";
 import { cn } from "@/lib/utils";
 
-const ORDER: PortalId[] = ["marketing", "investor", "business", "admin"];
+const ORDER: PortalId[] = ["marketing", "investor", "registry", "business", "admin"];
 
 export function PortalDevSwitcher({ className }: { className?: string }) {
   const pathname = usePathname();

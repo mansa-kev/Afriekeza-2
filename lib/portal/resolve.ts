@@ -11,6 +11,7 @@ export function resolvePortalFromHost(host: string): PortalId {
   const hostname = host.split(":")[0].toLowerCase();
 
   if (hostname.startsWith("invest.")) return "investor";
+  if (hostname.startsWith("registry.")) return "registry";
   if (hostname.startsWith("business.")) return "business";
   if (hostname.startsWith("admin.")) return "admin";
 
